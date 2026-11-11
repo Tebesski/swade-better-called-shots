@@ -1,5 +1,6 @@
 .swade .bcs-sheet-button {
    display: grid;
+   grid-template: minmax(0, 1fr) / minmax(0, 1fr);
    place-items: center;
    align-self: center;
    justify-self: center;
@@ -28,6 +29,8 @@
 .swade .bcs-sheet-button img {
    inline-size: 100%;
    block-size: 100%;
+   min-inline-size: 0;
+   min-block-size: 0;
    object-fit: contain;
    border: 0;
 }

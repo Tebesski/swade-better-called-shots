@@ -1,0 +1,105 @@
+<div class="standard-form bcs-editor-content">
+  <div class="bcs-editor-scroll">
+  {{#each groups}}
+    <section class="bcs-shot-group">
+      <h3>{{label}}</h3>
+      {{#each shots}}
+        <details class="bcs-shot" data-shot-id="{{id}}" name="bcs-{{../../appId}}">
+          <summary>
+            {{#if item}}<img src="{{item.img}}" alt="">{{/if}}
+            <strong>{{name}}</strong>
+            <span class="bcs-shot-summary">{{summary}}</span>
+          </summary>
+          <fieldset {{disabled (not ../../editable)}}>
+            {{#if item}}
+              <div class="bcs-field-grid">
+                <label>Hardness <input type="number" min="0" data-field="hardness" value="{{hardness}}"></label>
+                <label>Equip mode <input type="text" value="{{mode.label}}" readonly></label>
+              </div>
+            {{else}}
+              <div class="bcs-field-grid">
+                <label>Armour <input type="number" min="0" data-field="armour" value="{{armourInput}}" {{disabled deriveArmour}}></label>
+                <label class="bcs-checkbox">Derive from Armour <input type="checkbox" data-field="deriveArmour" {{checked deriveArmour}}></label>
+                {{#if hasHelmet}}
+                  <label>Helmet
+                    <select data-field="helmet">
+                      {{selectOptions ../../helmets selected=helmet}}
+                    </select>
+                  </label>
+                {{/if}}
+              </div>
+            {{/if}}
+            <div class="bcs-field-grid">
+              <label>Scale
+                <span class="bcs-scale-control">
+                  <input type="number" step="2" min="-6" max="6" data-field="scale" value="{{scaleInput}}" placeholder="{{scale}}" {{disabled deriveScale}}>
+                  <button type="button" data-bcs-pick-scale aria-label="Pick scale" data-tooltip="Pick scale" {{disabled deriveScale}}><i class="fa-solid fa-ruler"></i></button>
+                </span>
+              </label>
+              {{#if item}}
+                <label class="bcs-checkbox">Derive attack from scale <input type="checkbox" data-field="deriveAttack" {{checked deriveAttack}}></label>
+              {{else}}
+                <label class="bcs-checkbox">Derive from creature scale <input type="checkbox" data-field="deriveScale" {{checked deriveScale}}></label>
+              {{/if}}
+            </div>
+            <div class="bcs-field-grid">
+              {{#if item}}
+                <label>Attack modifier <input type="number" data-field="attack" value="{{attack}}" {{disabled deriveAttack}}></label>
+              {{else}}
+                <label>Attack modifier <input type="number" data-field="attack" value="{{attack}}" data-default-attack="{{defaultAttack}}" data-tooltip="Added to the scale difference. Clear the field to restore the default."></label>
+              {{/if}}
+              <label>Damage modifier <input type="number" data-field="damage" value="{{damage}}"></label>
+            </div>
+            {{#if item}}
+              <label class="bcs-checkbox">Equip mode affects the Attack modifier <input type="checkbox" data-field="equipAffects" {{checked equipAffects}}></label>
+              <div class="bcs-adjustments" {{#unless equipAffects}}hidden{{/unless}}>
+                {{#each modes}}
+                  <label>{{label}} <input type="number" data-adjustment="{{key}}" value="{{value}}"></label>
+                {{/each}}
+              </div>
+            {{/if}}
+            <div class="bcs-flag-field">
+              <label>Flags <input type="text" data-field="flags" value="{{customFlags}}" placeholder="Add comma-separated flags"></label>
+              <button type="button" data-bcs-pick-flag aria-label="Pick a flag" data-tooltip="Pick a flag"><i class="fa-solid fa-tags"></i></button>
+            </div>
+            <div class="bcs-flags">{{#each baseFlags}}<span>{{this}}</span>{{/each}}</div>
+            <div class="bcs-note-header">
+              <strong>Roll notes</strong>
+              <button type="button" data-bcs-add-note><i class="fa-solid fa-plus"></i> Add note</button>
+            </div>
+            <div class="bcs-notes">
+              {{#each notes}}
+                <div class="bcs-note" {{#if defaultId}}data-default-note-id="{{defaultId}}"{{/if}}>
+                  <div class="bcs-note-controls">
+                    <label>Roll <select data-note-field="stage">{{selectOptions ../../../stages selected=stage}}</select></label>
+                    <label>Outcome <select data-note-field="outcome">{{selectOptions ../../../outcomes selected=outcome}}</select></label>
+                    <label data-note-raises {{#unless exact}}hidden{{/unless}}>Raises <input type="number" min="1" data-note-field="raises" value="{{raises}}"></label>
+                    <button type="button" data-bcs-remove-note aria-label="Remove note" data-tooltip="Remove note"><i class="fa-solid fa-trash"></i></button>
+                  </div>
+                  <textarea data-note-field="text" aria-label="Note text" rows="2">{{text}}</textarea>
+                </div>
+              {{/each}}
+            </div>
+          </fieldset>
+        </details>
+      {{else}}
+        <p class="hint">No carried items.</p>
+      {{/each}}
+    </section>
+  {{/each}}
+  </div>
+  {{#if editable}}
+    <footer class="form-footer"><button type="submit"><i class="fa-solid fa-floppy-disk"></i> Save changes</button></footer>
+  {{/if}}
+  <template class="bcs-note-template">
+    <div class="bcs-note">
+      <div class="bcs-note-controls">
+        <label>Roll <select data-note-field="stage">{{selectOptions stages}}</select></label>
+        <label>Outcome <select data-note-field="outcome">{{selectOptions outcomes}}</select></label>
+        <label data-note-raises hidden>Raises <input type="number" min="1" data-note-field="raises" value="1"></label>
+        <button type="button" data-bcs-remove-note aria-label="Remove note" data-tooltip="Remove note"><i class="fa-solid fa-trash"></i></button>
+      </div>
+      <textarea data-note-field="text" aria-label="Note text" rows="2"></textarea>
+    </div>
+  </template>
+</div>

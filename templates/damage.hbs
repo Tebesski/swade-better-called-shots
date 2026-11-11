@@ -1,0 +1,8 @@
+<section class="bcs-location-defence">
+  <strong>Called Shot · {{shot.name}}</strong>
+  {{#if showDefence}}
+    <p>Toughness {{values.toughness}} ({{values.armor}} armour) · Effective Toughness {{values.effectiveToughness}}</p>
+  {{/if}}
+  {{#if values.immunity}}<p>{{values.immunity}}</p>{{/if}}
+  {{#each values.applied}}<p class="hint">{{label}} · {{selector}} {{before}} → {{after}}</p>{{/each}}
+</section>

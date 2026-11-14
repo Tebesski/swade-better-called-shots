@@ -111,7 +111,9 @@ jobs:
                  ./module.zip                        \
                 `# The files that will be included.` \
                 module.json                          \
-                README.md                            \
+                image-license.md                     \
+                target.png                           \
+                target-hover.png                     \
                 scripts/                             \
                 styles/                              \
                 templates/                           \

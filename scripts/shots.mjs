@@ -1,3 +1,4 @@
+import {t as sbsI18n} from "./i18n.mjs";
 import {normalizeFlags, normalizePattern} from "../../swade-better-effects/scripts/rules.mjs";
 
 export const MODULE_ID = "swade-better-called-shots";
@@ -5,26 +6,26 @@ export const EFFECTS = "swade-better-effects";
 export const QUERY = `${MODULE_ID}.resolveDamage`;
 
 export const SCALES = [
-  {value: -6, label: "Tiny", examples: "Pistol, key, watch"},
-  {value: -4, label: "Very Small", examples: "Dagger, holster, canteen"},
-  {value: -2, label: "Small", examples: "Sword, shield, backpack"},
-  {value: 0, label: "Normal", examples: "Rifle case, trunk, longbow"},
-  {value: 2, label: "Large", examples: "Crate, large chest"},
-  {value: 4, label: "Huge", examples: "Field cannon, wagon"},
-  {value: 6, label: "Gargantuan", examples: "Siege tower, ship’s mast"}
+  {value: -6, get label() { return sbsI18n("swade-better-called-shots.UI.Tiny_37616f6478"); }, get examples() { return sbsI18n("swade-better-called-shots.UI.Pistolkeywatch_c6c66f966f"); }},
+  {value: -4, get label() { return sbsI18n("swade-better-called-shots.UI.VerySmall_f151740336"); }, get examples() { return sbsI18n("swade-better-called-shots.UI.Daggerholstercanteen_ab8d83dd26"); }},
+  {value: -2, get label() { return sbsI18n("swade-better-called-shots.UI.Small_5263293fc2"); }, get examples() { return sbsI18n("swade-better-called-shots.UI.Swordshieldbackpack_f45e7d9677"); }},
+  {value: 0, get label() { return sbsI18n("swade-better-called-shots.UI.Normal_a7248eeb45"); }, get examples() { return sbsI18n("swade-better-called-shots.UI.Riflecasetrunklongbow_ba20864196"); }},
+  {value: 2, get label() { return sbsI18n("swade-better-called-shots.UI.Large_ab80540d98"); }, get examples() { return sbsI18n("swade-better-called-shots.UI.Cratelargechest_df4c02e1f9"); }},
+  {value: 4, get label() { return sbsI18n("swade-better-called-shots.UI.Huge_f171571d73"); }, get examples() { return sbsI18n("swade-better-called-shots.UI.Fieldcannonwagon_05a8b60df9"); }},
+  {value: 6, get label() { return sbsI18n("swade-better-called-shots.UI.Gargantuan_a36912afd6"); }, get examples() { return sbsI18n("swade-better-called-shots.UI.Siegetowershipsmast_7628a52e5f"); }}
 ];
 
 export const MODES = [
-  {key: "carried", label: "Carried"}, {key: "offHand", label: "Off-Hand"},
-  {key: "mainHand", label: "Main Hand"}, {key: "twoHands", label: "Two Hands"}
+  {key: "carried", get label() { return sbsI18n("swade-better-called-shots.UI.Carried_4014b8870c"); }}, {key: "offHand", get label() { return sbsI18n("swade-better-called-shots.UI.OffHand_a7bac73edb"); }},
+  {key: "mainHand", get label() { return sbsI18n("swade-better-called-shots.UI.MainHand_ed3897f136"); }}, {key: "twoHands", get label() { return sbsI18n("swade-better-called-shots.UI.TwoHands_e3e5ec9b38"); }}
 ];
 
 const LOCATIONS = [
-  {id: "hand", name: "Hand", location: "arms", attack: -4, damage: 0},
-  {id: "head", name: "Head", location: "head", attack: -4, damage: 4},
-  {id: "vitals", name: "Vitals", location: "torso", attack: -4, damage: 4},
-  {id: "limbs", name: "Limbs", attack: -2, damage: 0},
-  {id: "unarmoured-area", name: "Unarmoured Area", attack: -6, damage: 0}
+  {id: "hand", get name() { return sbsI18n("swade-better-called-shots.UI.Hand_fa18c06733"); }, location: "arms", attack: -4, damage: 0},
+  {id: "head", get name() { return sbsI18n("swade-better-called-shots.UI.Head_9bb0aacc6d"); }, location: "head", attack: -4, damage: 4},
+  {id: "vitals", get name() { return sbsI18n("swade-better-called-shots.UI.Vitals_85ff45d0c4"); }, location: "torso", attack: -4, damage: 4},
+  {id: "limbs", get name() { return sbsI18n("swade-better-called-shots.UI.Limbs_2f144d15a9"); }, attack: -2, damage: 0},
+  {id: "unarmoured-area", get name() { return sbsI18n("swade-better-called-shots.UI.UnarmouredArea_305116a48e"); }, attack: -6, damage: 0}
 ];
 
 export const isCreature = actor => ["character", "npc"].includes(actor?.type);
@@ -201,8 +202,8 @@ export function addDamageRules(context, actor, token, item, rules) {
   };
   if (context.targetItemId) {
     if (item && item.type !== "armor") {
-      add(item, "resistance", "Resistance", "subtract");
-      add(item, "weakness", "Weakness", "add");
+      add(item, sbsI18n("swade-better-called-shots.UI.resistance_be970d090a"), sbsI18n("swade-better-called-shots.UI.Resistance_c35070bce1"), sbsI18n("swade-better-called-shots.UI.subtract_1cc624bbe4"));
+      add(item, sbsI18n("swade-better-called-shots.UI.weakness_448545189b"), sbsI18n("swade-better-called-shots.UI.Weakness_f3e0689e79"), sbsI18n("swade-better-called-shots.UI.add_7e9e5ac30f"));
     }
     return;
   }
@@ -210,18 +211,18 @@ export function addDamageRules(context, actor, token, item, rules) {
   const location = context.calledShotId && context.targetUuids?.includes(token?.uuid)
     ? actorLocations(actor).find(shot => shot.id === context.calledShotId) : undefined;
   const worn = location?.worn ?? equippedArmour(actor).filter(armour => armour.system.locations.torso);
-  for (const armour of worn) add(armour, "resistance", "Resistance", "subtract", true);
+  for (const armour of worn) add(armour, sbsI18n("swade-better-called-shots.UI.resistance_be970d090a"), sbsI18n("swade-better-called-shots.UI.Resistance_c35070bce1"), sbsI18n("swade-better-called-shots.UI.subtract_1cc624bbe4"), true);
 }
 
 export function referenceNotes(shot, disarmLink) {
-  const disarm = disarmLink || "Disarmed";
+  const disarm = disarmLink || sbsI18n("swade-better-called-shots.UI.Disarmed_0556143cca");
   const notes = {
     hand: [{defaultId: "hit", stage: "attack", outcome: "success", text: `The target may be ${disarm}.`},
       {defaultId: "disarm", stage: "damage", outcome: "success", text: `The target rolls Strength at −4, including Wound penalties, or is ${disarm}.`}],
     head: [{defaultId: "hit", stage: "attack", outcome: "success", text: "A hit to the head adds +4 damage against living targets."}],
     vitals: [{defaultId: "hit", stage: "attack", outcome: "success", text: "A hit to the vitals adds +4 damage against living targets."}],
     limbs: [{defaultId: "disarm", stage: "damage", outcome: "success", text: `If the shot hit an arm, the target rolls Strength at −2, including Wound penalties, or is ${disarm}.`}],
-    "unarmoured-area": [{defaultId: "opening", stage: "attack", outcome: "any", text: "Choose an exposed spot. The GM sets the penalty based on the size of the opening."}]
+    "unarmoured-area": [{defaultId: "opening", stage: "attack", outcome: "any", text: sbsI18n("swade-better-called-shots.UI.ChooseanexposedspotTheGM_765d4d0f5a")}]
   };
   if (shot.exposedFace) notes.head.push({defaultId: "face", stage: "attack", outcome: "any", text: "A shot to the exposed face bypasses helmet armour and applies a further −1."});
   return notes[shot.id] ?? [];

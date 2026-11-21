@@ -13,15 +13,15 @@
           <fieldset {{disabled (not ../../editable)}}>
             {{#if item}}
               <div class="bcs-field-grid">
-                <label>Hardness <input type="number" min="0" data-field="hardness" value="{{hardness}}"></label>
-                <label>Equip mode <input type="text" value="{{mode.label}}" readonly></label>
+                <label>{{localize "swade-better-called-shots.UI.Hardness_c5f4f8b1a0"}} <input type="number" min="0" data-field="hardness" value="{{hardness}}"></label>
+                <label>{{localize "swade-better-called-shots.UI.Equipmode_a4af435617"}} <input type="text" value="{{mode.label}}" readonly></label>
               </div>
             {{else}}
               <div class="bcs-field-grid">
-                <label>Armour <input type="number" min="0" data-field="armour" value="{{armourInput}}" {{disabled deriveArmour}}></label>
-                <label class="bcs-checkbox">Derive from Armour <input type="checkbox" data-field="deriveArmour" {{checked deriveArmour}}></label>
+                <label>{{localize "swade-better-called-shots.UI.Armour_642ebd131f"}} <input type="number" min="0" data-field="armour" value="{{armourInput}}" {{disabled deriveArmour}}></label>
+                <label class="bcs-checkbox">{{localize "swade-better-called-shots.UI.DerivefromArmour_e2bc854e3c"}} <input type="checkbox" data-field="deriveArmour" {{checked deriveArmour}}></label>
                 {{#if hasHelmet}}
-                  <label>Helmet
+                  <label>{{localize "swade-better-called-shots.UI.Helmet_a47fdf6415"}}
                     <select data-field="helmet">
                       {{selectOptions ../../helmets selected=helmet}}
                     </select>
@@ -30,28 +30,28 @@
               </div>
             {{/if}}
             <div class="bcs-field-grid">
-              <label>Scale
+              <label>{{localize "swade-better-called-shots.UI.Scale_f102986b39"}}
                 <span class="bcs-scale-control">
                   <input type="number" step="2" min="-6" max="6" data-field="scale" value="{{scaleInput}}" placeholder="{{scale}}" {{disabled deriveScale}}>
-                  <button type="button" data-bcs-pick-scale aria-label="Pick scale" data-tooltip="Pick scale" {{disabled deriveScale}}><i class="fa-solid fa-ruler"></i></button>
+                  <button type="button" data-bcs-pick-scale aria-label="{{localize "swade-better-called-shots.UI.Pickscale_0e716ba9a1"}}" data-tooltip="{{localize "swade-better-called-shots.UI.Pickscale_0e716ba9a1"}}" {{disabled deriveScale}}><i class="fa-solid fa-ruler"></i></button>
                 </span>
               </label>
               {{#if item}}
-                <label class="bcs-checkbox">Derive attack from scale <input type="checkbox" data-field="deriveAttack" {{checked deriveAttack}}></label>
+                <label class="bcs-checkbox">{{localize "swade-better-called-shots.UI.Deriveattackfromscale_26fd7d0cd9"}} <input type="checkbox" data-field="deriveAttack" {{checked deriveAttack}}></label>
               {{else}}
-                <label class="bcs-checkbox">Derive from creature scale <input type="checkbox" data-field="deriveScale" {{checked deriveScale}}></label>
+                <label class="bcs-checkbox">{{localize "swade-better-called-shots.UI.Derivefromcreaturescale_2cf7680ffb"}} <input type="checkbox" data-field="deriveScale" {{checked deriveScale}}></label>
               {{/if}}
             </div>
             <div class="bcs-field-grid">
               {{#if item}}
-                <label>Attack modifier <input type="number" data-field="attack" value="{{attack}}" {{disabled deriveAttack}}></label>
+                <label>{{localize "swade-better-called-shots.UI.Attackmodifier_2cd90d6a70"}} <input type="number" data-field="attack" value="{{attack}}" {{disabled deriveAttack}}></label>
               {{else}}
-                <label>Attack modifier <input type="number" data-field="attack" value="{{attack}}" data-default-attack="{{defaultAttack}}" data-tooltip="Added to the scale difference. Clear the field to restore the default."></label>
+                <label>{{localize "swade-better-called-shots.UI.Attackmodifier_2cd90d6a70"}} <input type="number" data-field="attack" value="{{attack}}" data-default-attack="{{defaultAttack}}" data-tooltip="{{localize "swade-better-called-shots.UI.AddedtothescaledifferenceClear_f47373911d"}}"></label>
               {{/if}}
-              <label>Damage modifier <input type="number" data-field="damage" value="{{damage}}"></label>
+              <label>{{localize "swade-better-called-shots.UI.Damagemodifier_bc0d310cd9"}} <input type="number" data-field="damage" value="{{damage}}"></label>
             </div>
             {{#if item}}
-              <label class="bcs-checkbox">Equip mode affects the Attack modifier <input type="checkbox" data-field="equipAffects" {{checked equipAffects}}></label>
+              <label class="bcs-checkbox">{{localize "swade-better-called-shots.UI.EquipmodeaffectstheAttackmodifier_592094fe0d"}} <input type="checkbox" data-field="equipAffects" {{checked equipAffects}}></label>
               <div class="bcs-adjustments" {{#unless equipAffects}}hidden{{/unless}}>
                 {{#each modes}}
                   <label>{{label}} <input type="number" data-adjustment="{{key}}" value="{{value}}"></label>
@@ -59,47 +59,47 @@
               </div>
             {{/if}}
             <div class="bcs-flag-field">
-              <label>Flags <input type="text" data-field="flags" value="{{customFlags}}" placeholder="Add comma-separated flags"></label>
-              <button type="button" data-bcs-pick-flag aria-label="Pick a flag" data-tooltip="Pick a flag"><i class="fa-solid fa-tags"></i></button>
+              <label>{{localize "swade-better-called-shots.UI.Flags_f38d9950af"}} <input type="text" data-field="flags" value="{{customFlags}}" placeholder="{{localize "swade-better-called-shots.UI.Addcommaseparatedflags_fc3cd8030d"}}"></label>
+              <button type="button" data-bcs-pick-flag aria-label="{{localize "swade-better-called-shots.UI.Pickaflag_d4dd4deb4f"}}" data-tooltip="{{localize "swade-better-called-shots.UI.Pickaflag_d4dd4deb4f"}}"><i class="fa-solid fa-tags"></i></button>
             </div>
             <div class="bcs-flags">{{#each baseFlags}}<span>{{this}}</span>{{/each}}</div>
             <div class="bcs-note-header">
-              <strong>Roll notes</strong>
-              <button type="button" data-bcs-add-note><i class="fa-solid fa-plus"></i> Add note</button>
+              <strong>{{localize "swade-better-called-shots.UI.Rollnotes_6e1215b6ef"}}</strong>
+              <button type="button" data-bcs-add-note><i class="fa-solid fa-plus"></i> {{localize "swade-better-called-shots.UI.Addnote_63565c0485"}}</button>
             </div>
             <div class="bcs-notes">
               {{#each notes}}
                 <div class="bcs-note" {{#if defaultId}}data-default-note-id="{{defaultId}}"{{/if}}>
                   <div class="bcs-note-controls">
-                    <label>Roll <select data-note-field="stage">{{selectOptions ../../../stages selected=stage}}</select></label>
-                    <label>Outcome <select data-note-field="outcome">{{selectOptions ../../../outcomes selected=outcome}}</select></label>
-                    <label data-note-raises {{#unless exact}}hidden{{/unless}}>Raises <input type="number" min="1" data-note-field="raises" value="{{raises}}"></label>
-                    <button type="button" data-bcs-remove-note aria-label="Remove note" data-tooltip="Remove note"><i class="fa-solid fa-trash"></i></button>
+                    <label>{{localize "swade-better-called-shots.UI.Roll_4464105f25"}} <select data-note-field="stage">{{selectOptions ../../../stages selected=stage}}</select></label>
+                    <label>{{localize "swade-better-called-shots.UI.Outcome_4e80abb5b1"}} <select data-note-field="outcome">{{selectOptions ../../../outcomes selected=outcome}}</select></label>
+                    <label data-note-raises {{#unless exact}}hidden{{/unless}}>{{localize "swade-better-called-shots.UI.Raises_e97e76330f"}} <input type="number" min="1" data-note-field="raises" value="{{raises}}"></label>
+                    <button type="button" data-bcs-remove-note aria-label="{{localize "swade-better-called-shots.UI.Removenote_c06bd11ad0"}}" data-tooltip="{{localize "swade-better-called-shots.UI.Removenote_c06bd11ad0"}}"><i class="fa-solid fa-trash"></i></button>
                   </div>
-                  <textarea data-note-field="text" aria-label="Note text" rows="2">{{text}}</textarea>
+                  <textarea data-note-field="text" aria-label="{{localize "swade-better-called-shots.UI.Notetext_369e75791f"}}" rows="2">{{text}}</textarea>
                 </div>
               {{/each}}
             </div>
           </fieldset>
         </details>
       {{else}}
-        <p class="hint">No carried items.</p>
+        <p class="hint">{{localize "swade-better-called-shots.UI.Nocarrieditems_f0a2a50997"}}</p>
       {{/each}}
     </section>
   {{/each}}
   </div>
   {{#if editable}}
-    <footer class="form-footer"><button type="submit"><i class="fa-solid fa-floppy-disk"></i> Save changes</button></footer>
+    <footer class="form-footer"><button type="submit"><i class="fa-solid fa-floppy-disk"></i> {{localize "swade-better-called-shots.UI.Savechanges_dd0ae7a5cb"}}</button></footer>
   {{/if}}
   <template class="bcs-note-template">
     <div class="bcs-note">
       <div class="bcs-note-controls">
-        <label>Roll <select data-note-field="stage">{{selectOptions stages}}</select></label>
-        <label>Outcome <select data-note-field="outcome">{{selectOptions outcomes}}</select></label>
-        <label data-note-raises hidden>Raises <input type="number" min="1" data-note-field="raises" value="1"></label>
-        <button type="button" data-bcs-remove-note aria-label="Remove note" data-tooltip="Remove note"><i class="fa-solid fa-trash"></i></button>
+        <label>{{localize "swade-better-called-shots.UI.Roll_4464105f25"}} <select data-note-field="stage">{{selectOptions stages}}</select></label>
+        <label>{{localize "swade-better-called-shots.UI.Outcome_4e80abb5b1"}} <select data-note-field="outcome">{{selectOptions outcomes}}</select></label>
+        <label data-note-raises hidden>{{localize "swade-better-called-shots.UI.Raises_e97e76330f"}} <input type="number" min="1" data-note-field="raises" value="1"></label>
+        <button type="button" data-bcs-remove-note aria-label="{{localize "swade-better-called-shots.UI.Removenote_c06bd11ad0"}}" data-tooltip="{{localize "swade-better-called-shots.UI.Removenote_c06bd11ad0"}}"><i class="fa-solid fa-trash"></i></button>
       </div>
-      <textarea data-note-field="text" aria-label="Note text" rows="2"></textarea>
+      <textarea data-note-field="text" aria-label="{{localize "swade-better-called-shots.UI.Notetext_369e75791f"}}" rows="2"></textarea>
     </div>
   </template>
 </div>

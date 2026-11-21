@@ -1,7 +1,7 @@
 <section class="bcs-location-defence">
-  <strong>Called Shot · {{shot.name}}</strong>
+  <strong>{{localize "swade-better-called-shots.UI.CalledShot_b39a01dc65"}} {{shot.name}}</strong>
   {{#if showDefence}}
-    <p>Toughness {{values.toughness}} ({{values.armor}} armour) · Effective Toughness {{values.effectiveToughness}}</p>
+    <p>{{localize "swade-better-called-shots.UI.Toughness_19cd2c1eec"}} {{values.toughness}} ({{values.armor}} {{localize "swade-better-called-shots.UI.armourEffectiveToughness_2b3c58a75d"}} {{values.effectiveToughness}}</p>
   {{/if}}
   {{#if values.immunity}}<p>{{values.immunity}}</p>{{/if}}
   {{#each values.applied}}<p class="hint">{{label}} · {{selector}} {{before}} → {{after}}</p>{{/each}}

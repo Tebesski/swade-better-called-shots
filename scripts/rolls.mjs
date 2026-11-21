@@ -1,3 +1,4 @@
+import {t as sbsI18n} from "./i18n.mjs";
 import {applyDamageFormula, sharedDamageRules} from "../../swade-better-effects/scripts/damage-formulas.mjs";
 import {documentFlags} from "../../swade-better-effects/scripts/flags.mjs";
 import {criticalFailure} from "../../swade-better-effects/scripts/roll-outcomes.mjs";
@@ -94,7 +95,7 @@ function changeModifiers(app, state, shot) {
     state.added.push(...adjustment.applied);
   }
   const value = app.isDamageRoll ? shot.damage : attackModifier(shot, scaleOf(state.actor));
-  if (value) state.added.push({label: `Called Shot · ${shot.name.replace(/[\[\]]/g, "")}`, value});
+  if (value) state.added.push({label: sbsI18n("swade-better-called-shots.UI.CalledShot_a6212f9fa6", {p0: (shot.name.replace(/[\[\]]/g, ""))}), value});
   if (app.isDamageRoll && state.linked?.raisedAttack && shot.kind === "location") {
     const die = state.weapon?.system.bonusDamageDie ?? 6;
     const count = state.weapon?.system.bonusDamageDice ?? 1;
@@ -163,13 +164,13 @@ function renderRollPicker(app, root) {
   const toggle = doc.createElement("button");
   toggle.type = "button";
   toggle.className = "toggle-list";
-  toggle.setAttribute("aria-label", "Called Shot");
+  toggle.setAttribute("aria-label", sbsI18n("swade-better-called-shots.UI.CalledShot_80891ed8d2"));
   toggle.setAttribute("aria-expanded", "false");
   toggle.dataset.tooltip = state.target.name;
   toggle.disabled = !!state.linked;
   const caret = doc.createElement("i");
   caret.className = "fa-solid fa-caret-right";
-  toggle.append(caret, state.shot ? `Called Shot · ${state.shot.name}` : "Called Shot");
+  toggle.append(caret, state.shot ? `Called Shot · ${state.shot.name}` : sbsI18n("swade-better-called-shots.UI.CalledShot_80891ed8d2"));
   const dropdown = doc.createElement("div");
   dropdown.className = "dropdown";
   dropdown.id = `${app.id}-called-shot`;
@@ -204,7 +205,7 @@ function renderRollPicker(app, root) {
     choices.append(entry);
   };
   addChoice("", "None");
-  for (const [label, shots] of [["Body locations", state.groups.locations], ["Items", state.groups.items]]) {
+  for (const [label, shots] of [[sbsI18n("swade-better-called-shots.UI.Bodylocations_fc7007c432"), state.groups.locations], [sbsI18n("swade-better-called-shots.UI.Items_fb8e7a1a3c"), state.groups.items]]) {
     if (!shots.length) continue;
     const heading = doc.createElement("li");
     heading.className = "group-header";
@@ -261,12 +262,12 @@ export async function rollShotDamage(message, raisedAttack, actionId) {
   if (!shot) return;
   const target = resolve(shot?.tokenUuid);
   if (!allShots(target?.actor).some(entry => entry.id === shot.id)) {
-    return ui.notifications.warn("That called shot is no longer available on the original target.");
+    return ui.notifications.warn(sbsI18n("swade-better-called-shots.UI.Thatcalledshotisnolonger_7b54922f9e"));
   }
   const weapon = resolve(shot.weaponUuid);
   const action = weapon?.system.actions?.additional?.[actionId];
   const damageAction = action?.type === "damage" ? action : null;
-  if (!weapon?.isOwner || !(damageAction?.override || weapon.system.damage)) return ui.notifications.warn("The weapon for this attack is no longer available.");
+  if (!weapon?.isOwner || !(damageAction?.override || weapon.system.damage)) return ui.notifications.warn(sbsI18n("swade-better-called-shots.UI.Theweaponforthisattackis_4463262767"));
   const damageMod = game.swade.itemChatCardHelper.getDamageMod(weapon);
   const additionalMods = damageMod ? [damageMod] : [];
   if (damageAction?.modifier) additionalMods.push({label: damageAction.name, value: damageAction.modifier});

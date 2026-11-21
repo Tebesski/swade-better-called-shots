@@ -1,3 +1,4 @@
+import {t as sbsI18n} from "./i18n.mjs";
 import {MODULE_ID, actorShots, addDamageRules, addTargetFlags, generatedGearFlags, isGear} from "./shots.mjs";
 import {loadDisarmRule} from "./disarm.mjs";
 import {openCalledShots, refreshCalledShots, renderActorButton, renderGearFields} from "./sheets.mjs";
@@ -14,7 +15,7 @@ Hooks.on("swadeBetterEffectsAutomaticFlags", (item, flags) => { flags.push(...ge
 Hooks.on("swadeBetterEffectsTargetFlags", addTargetFlags);
 Hooks.on("swadeBetterEffectsDamageRules", addDamageRules);
 Hooks.on("updateActor", refreshCalledShots);
-for (const event of ["createItem", "updateItem", "deleteItem"]) {
+for (const event of [sbsI18n("swade-better-called-shots.UI.createItem_2be87307d5"), sbsI18n("swade-better-called-shots.UI.updateItem_fc765ef48a"), sbsI18n("swade-better-called-shots.UI.deleteItem_0259ed622a")]) {
   Hooks.on(event, item => { if (isGear(item) && item.actor) refreshCalledShots(item.actor); });
 }
 Hooks.on("renderApplicationV2", (app, root) => {

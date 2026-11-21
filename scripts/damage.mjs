@@ -1,3 +1,4 @@
+import {t as sbsI18n} from "./i18n.mjs";
 import {TargetedDamageApplicator} from "../../swade-targeted-damage/modules/TargetedDamageApplicator.mjs";
 import {actorWithDefense, prepareDamage} from "../../swade-better-effects/scripts/damage.mjs";
 import {calculateWounds} from "../../swade-better-effects/scripts/rules.mjs";
@@ -72,7 +73,7 @@ class CalledShotDamage extends TargetedDamageApplicator {
   }
 
   render(options, ...args) {
-    if (options?.parts) options = {...options, parts: [...new Set([...options.parts, "calledShot"])]};
+    if (options?.parts) options = {...options, parts: [...new Set([...options.parts, sbsI18n("swade-better-called-shots.UI.calledShot_e1c3585869")])]};
     return super.render(options, ...args);
   }
 
@@ -100,17 +101,17 @@ async function openRequest({messageUuid, tokenUuid, shot: sentShot, rollData}, {
   if (!message?.visible || message.isContentVisible === false) {
     // A GM can send a private damage roll to a defender without revealing its chat card.
     if (!user.isGM || !rollData || !Number.isFinite(rollData.total) || !Number.isFinite(rollData.ap)) {
-      throw new Error("This damage roll is not accessible.");
+      throw new Error(sbsI18n("swade-better-called-shots.UI.Thisdamagerollisnotaccessible_6d3b75e0a6"));
     }
     message = {uuid: messageUuid, significantRoll: {...rollData, options: {rollType: "damage"}},
       getFlag: (scope, key) => scope === EFFECTS && key === "context" ? rollData.context
         : scope === MODULE_ID && key === "shot" ? sentShot : undefined};
   } else {
-    if (!user.isGM && message.author?.id !== user.id) throw new Error("Only the roll author or a GM can send damage.");
+    if (!user.isGM && message.author?.id !== user.id) throw new Error(sbsI18n("swade-better-called-shots.UI.Onlytherollauthorora_e992e08ed9"));
   }
   const shot = getCalledShot(message);
   const token = shot?.tokenUuid === tokenUuid ? getToken(shot) : null;
-  if (!token?.actor?.isOwner || shot?.kind !== "location" || !isDamage(message)) throw new Error("This called shot cannot be resolved.");
+  if (!token?.actor?.isOwner || shot?.kind !== "location" || !isDamage(message)) throw new Error(sbsI18n("swade-better-called-shots.UI.Thiscalledshotcannotberesolved_5e3183c687"));
   const key = `${messageUuid}:${tokenUuid}`;
   const existing = open.get(key);
   if (existing?.state >= CalledShotDamage.RENDER_STATES.NONE) {
@@ -129,17 +130,17 @@ async function openRequest({messageUuid, tokenUuid, shot: sentShot, rollData}, {
 
 async function resolveLocationDamage(message, shot) {
   const actor = getToken(shot)?.actor;
-  if (!actor) return ui.notifications.warn("The original target is no longer available.");
+  if (!actor) return ui.notifications.warn(sbsI18n("swade-better-called-shots.UI.Theoriginaltargetisnolonger_d5182aeb6e"));
   const players = game.users.filter(user => user.active && !user.isGM && actor.testUserPermission(user, "OWNER"));
   const owner = players.find(user => user.character?.id === actor.id) ?? players[0] ?? (actor.isOwner ? game.user : game.users.activeGM);
-  if (!owner) return ui.notifications.warn(`No connected owner can resolve damage for ${actor.name}.`);
+  if (!owner) return ui.notifications.warn(sbsI18n("swade-better-called-shots.UI.Noconnectedownercanresolvedamage_480157b778", {p0: (actor.name)}));
   const roll = message.significantRoll;
   const request = {messageUuid: message.uuid, tokenUuid: shot.tokenUuid, shot, rollData: {total: damageTotal(message), ap: damageAP(message),
     isHeavyWeapon: roll.isHeavyWeapon, context: game.modules.get(EFFECTS).api.getRollContext(message)}};
   if (owner.id === game.user.id) await openRequest(request, {user: game.user});
   else {
     await owner.query(QUERY, request);
-    ui.notifications.info(`Sent damage for ${actor.name} to ${owner.name}.`);
+    ui.notifications.info(sbsI18n("swade-better-called-shots.UI.Sentdamageforto_509dfb5353", {p0: (actor.name), p1: (owner.name)}));
   }
 }
 
@@ -150,7 +151,7 @@ async function renderNotes(message, root, shot, outcome) {
   const doc = root.ownerDocument;
   const section = doc.createElement("section");
   section.className = "sbe-roll-notes bcs-roll-notes";
-  section.setAttribute("aria-label", "Called shot notes");
+  section.setAttribute("aria-label", sbsI18n("swade-better-called-shots.UI.Calledshotnotes_d883f35377"));
   const enrich = foundry.applications.ux.TextEditor.implementation.enrichHTML;
   for (const note of notes) {
     const entry = doc.createElement("div");
@@ -190,7 +191,7 @@ function renderShotCard(message, root) {
     if (shot.kind === "item") {
       controls?.remove();
       const status = doc.createElement("span");
-      status.textContent = outcome.heavyBlocked ? "A Heavy Weapon is required." : outcome.success ? "Destroyed" : "Hardness held";
+      status.textContent = outcome.heavyBlocked ? sbsI18n("swade-better-called-shots.UI.AHeavyWeaponisrequired_a6d4a7e30d") : outcome.success ? sbsI18n("swade-better-called-shots.UI.Destroyed_ff49630c24") : sbsI18n("swade-better-called-shots.UI.Hardnessheld_b349c7fc04");
       result.append(status);
     } else if (canUse) {
       const original = controls?.querySelector("button");
@@ -217,7 +218,7 @@ function renderShotCard(message, root) {
     }, {capture: true});
     root.classList.add("bcs-called-damage");
   } else {
-    const status = outcome.critical ? "Critical failure" : !outcome.success ? "Miss" : outcome.raises ? "Raise" : "Hit";
+    const status = outcome.critical ? sbsI18n("swade-better-called-shots.UI.Criticalfailure_bbdaf0a2a4") : !outcome.success ? sbsI18n("swade-better-called-shots.UI.Miss_0317c92ad7") : outcome.raises ? sbsI18n("swade-better-called-shots.UI.Raise_0fd3685adc") : sbsI18n("swade-better-called-shots.UI.Hit_8a043f55ef");
     const tokenId = shot.tokenUuid.split(".").at(-1);
     const existing = [...root.querySelectorAll(".swadetools-rolldamage")].some(button => button.dataset.swadetoolsTargetid === tokenId);
     if (canUse && outcome.success && shot.weaponUuid && !existing) {
@@ -225,9 +226,9 @@ function renderShotCard(message, root) {
         const button = doc.createElement("button");
         button.type = "button";
         button.className = "bcs-hit";
-        const hitLabel = hit.raises ? "Raise" : "Hit";
+        const hitLabel = hit.raises ? sbsI18n("swade-better-called-shots.UI.Raise_0fd3685adc") : sbsI18n("swade-better-called-shots.UI.Hit_8a043f55ef");
         button.textContent = `${shot.tokenName}: ${hitLabel}${hits.length > 1 ? ` ${index + 1}` : ""}`;
-        button.dataset.tooltip = `Roll damage against ${shot.name}`;
+        button.dataset.tooltip = sbsI18n("swade-better-called-shots.UI.Rolldamageagainst_8f3a743b7c", {p0: (shot.name)});
         button.addEventListener("click", () => {
           void rollShotDamage(message, hit.raises > 0, message.flags?.["swade-tools"]?.damageaction).catch(report);
         });
@@ -261,7 +262,7 @@ async function announceDestruction(message, userId) {
   posting.add(message.uuid);
   try {
     const name = foundry.utils.escapeHTML(shot.name);
-    await ChatMessage.create({content: `The ${name} was destroyed`, speaker: message.speaker,
+    await ChatMessage.create({content: sbsI18n("swade-better-called-shots.UI.Thewasdestroyed_e76af5972e", {p0: (name)}), speaker: message.speaker,
       whisper: [...message.whisper], blind: message.blind});
   } finally { posting.delete(message.uuid); }
 }

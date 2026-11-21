@@ -1,3 +1,4 @@
+import {t as sbsI18n} from "./i18n.mjs";
 import {catalogFlags} from "../../swade-better-effects/scripts/flags.mjs";
 import {normalizeFlags, normalizePattern} from "../../swade-better-effects/scripts/rules.mjs";
 import {cleanRollNote} from "../../swade-better-effects/scripts/roll-notes.mjs";
@@ -8,9 +9,9 @@ import {disarmRuleLink, loadDisarmRule} from "./disarm.mjs";
 
 const {ApplicationV2, DialogV2, HandlebarsApplicationMixin} = foundry.applications.api;
 const editors = new WeakMap();
-const STAGES = {attack: "Attack", damage: "Damage"};
-const OUTCOMES = {any: "Any", success: "Success or raise", failure: "Failure", critical: "Critical failure",
-  raise: "Any raise", exact: "Exact raises"};
+const STAGES = {get attack() { return sbsI18n("swade-better-called-shots.UI.Attack_4cd548f3cc"); }, get damage() { return sbsI18n("swade-better-called-shots.UI.Damage_0c874f581a"); }};
+const OUTCOMES = {get any() { return sbsI18n("swade-better-called-shots.UI.Any_2b505597da"); }, get success() { return sbsI18n("swade-better-called-shots.UI.Successorraise_a1ecc16506"); }, get failure() { return sbsI18n("swade-better-called-shots.UI.Failure_7031edbcf9"); }, get critical() { return sbsI18n("swade-better-called-shots.UI.Criticalfailure_bbdaf0a2a4"); },
+  get raise() { return sbsI18n("swade-better-called-shots.UI.Anyraise_a4920b9997"); }, get exact() { return sbsI18n("swade-better-called-shots.UI.Exactraises_fca3b435ce"); }};
 
 const report = error => ui.notifications.error(error.message, {console: true});
 const field = (row, key) => row.querySelector(`[data-field="${key}"]`);
@@ -31,9 +32,9 @@ async function pickScale(current, onSelect) {
   const scroll = node(doc, "div");
   scroll.className = "sbs-size-table-scroll";
   const table = node(doc, "table");
-  table.setAttribute("aria-label", "Scale table");
+  table.setAttribute("aria-label", sbsI18n("swade-better-called-shots.UI.Scaletable_32a701acf5"));
   const header = table.createTHead().insertRow();
-  for (const title of ["Scale", "Modifier", "Example items"]) {
+  for (const title of [sbsI18n("swade-better-called-shots.UI.Scale_f102986b39"), sbsI18n("swade-better-called-shots.UI.Modifier_42e37604b6"), sbsI18n("swade-better-called-shots.UI.Exampleitems_cae20a79fd")]) {
     const th = node(doc, "th", title);
     th.scope = "col";
     header.append(th);
@@ -56,10 +57,10 @@ async function pickScale(current, onSelect) {
   section.append(scroll);
   const app = new DialogV2({
     classes: ["sbs-setting-dialog", "sbs-npc-size-picker"],
-    window: {title: "Scale Table", resizable: true},
+    window: {title: sbsI18n("swade-better-called-shots.UI.ScaleTable_d0b356ead5"), resizable: true},
     position: {width: 490, height: "auto"},
-    content: "<div></div>",
-    buttons: [{action: "close", label: "Close"}]
+    content: `<div></div>`,
+    buttons: [{action: "close", label: sbsI18n("swade-better-called-shots.UI.Close_7d9eb7acb1")}]
   });
   await app.render({force: true});
   app.element.querySelector(".dialog-content").replaceChildren(section);
@@ -75,7 +76,7 @@ function pickFlag(input, shot) {
   const choices = catalogFlags().filter(flag => !used.has(flag)).map(flag => ({key: flag, name: flag}));
   return new ChoicePicker({
     choices,
-    window: {title: "Pick a Flag"},
+    window: {title: sbsI18n("swade-better-called-shots.UI.PickaFlag_ccad2a0253")},
     onSelect: flag => {
       if (!input.isConnected) return;
       input.value = normalizeFlags([...normalizeFlags(input.value), flag]).join(", ");
@@ -87,7 +88,7 @@ function pickFlag(input, shot) {
 class CalledShotsEditor extends HandlebarsApplicationMixin(ApplicationV2) {
   static DEFAULT_OPTIONS = {
     tag: "form", classes: ["sbs-setting-dialog", "bcs-editor"], position: {width: 650, height: 635},
-    window: {title: "Called Shots", icon: "fa-solid fa-crosshairs", resizable: true},
+    window: {get title() { return sbsI18n("swade-better-called-shots.UI.CalledShots_eefd89ce13"); }, icon: "fa-solid fa-crosshairs", resizable: true},
     form: {handler: async function () { await this.save(); }, closeOnSubmit: false}
   };
   static PARTS = {body: {template: `modules/${MODULE_ID}/templates/editor.hbs`, scrollable: [".bcs-editor-scroll"]}};
@@ -114,10 +115,10 @@ class CalledShotsEditor extends HandlebarsApplicationMixin(ApplicationV2) {
       notes: rollNotes(shot, disarmRuleLink()).map(note => ({...note, exact: note.outcome === "exact"}))
     });
     return {...await super._prepareContext(options), appId: this.id, editable: this.actor.isOwner,
-      stages: STAGES, outcomes: OUTCOMES, helmets: {opened: "Opened helmet", closed: "Closed helmet"},
+      stages: STAGES, outcomes: OUTCOMES, helmets: {opened: sbsI18n("swade-better-called-shots.UI.Openedhelmet_7c19240a2a"), closed: sbsI18n("swade-better-called-shots.UI.Closedhelmet_899959d23e")},
       groups: [
-        {label: "Body locations", shots: locations.map(present)},
-        {label: "Items", shots: items.map(present)}
+        {label: sbsI18n("swade-better-called-shots.UI.Bodylocations_fc7007c432"), shots: locations.map(present)},
+        {label: sbsI18n("swade-better-called-shots.UI.Items_fb8e7a1a3c"), shots: items.map(present)}
       ]};
   }
 
@@ -132,10 +133,10 @@ class CalledShotsEditor extends HandlebarsApplicationMixin(ApplicationV2) {
       if (!button) return;
       const row = button.closest(".bcs-shot");
       if (button.hasAttribute("data-bcs-pick-scale")) {
-        const scale = field(row, "scale");
+        const scale = field(row, sbsI18n("swade-better-called-shots.UI.scale_f469802a31"));
         void pickScale(scale, () => scale.dispatchEvent(new Event("change", {bubbles: true}))).catch(report);
       } else if (button.hasAttribute("data-bcs-pick-flag")) {
-        void pickFlag(field(row, "flags"), this.shots.get(row.dataset.shotId)).catch(report);
+        void pickFlag(field(row, sbsI18n("swade-better-called-shots.UI.flags_2934fb49d6")), this.shots.get(row.dataset.shotId)).catch(report);
       } else if (button.hasAttribute("data-bcs-add-note")) {
         this.dirty = true;
         const notes = row.querySelector(".bcs-notes");
@@ -153,22 +154,22 @@ class CalledShotsEditor extends HandlebarsApplicationMixin(ApplicationV2) {
       if (!row) return;
       this.dirty = true;
       const shot = this.shots.get(row.dataset.shotId);
-      const helmet = field(row, "helmet");
+      const helmet = field(row, sbsI18n("swade-better-called-shots.UI.helmet_115584860c"));
       const preview = helmet ? actorLocations(this.actor, {headHelmet: helmet.value}).find(location => location.id === shot.id) : shot;
       switch (input.dataset.field) {
         case "helmet": {
-          if (field(row, "deriveArmour").checked) field(row, "armour").value = preview.derivedArmour;
-          const attack = field(row, "attack");
+          if (field(row, sbsI18n("swade-better-called-shots.UI.deriveArmour_7a7d0df19d")).checked) field(row, sbsI18n("swade-better-called-shots.UI.armour_4bde87895b")).value = preview.derivedArmour;
+          const attack = field(row, sbsI18n("swade-better-called-shots.UI.attack_fca3067963"));
           if (shot.attackOverride == null && attack.value === attack.dataset.defaultAttack) {
             attack.value = preview.defaultAttack;
           }
           attack.dataset.defaultAttack = preview.defaultAttack;
           break;
         }
-        case "deriveArmour": this.toggleDerived(field(row, "armour"), input.checked, preview.derivedArmour, shot.armourOverride); break;
-        case "deriveScale": this.toggleDerived(field(row, "scale"), input.checked, shot.derivedScale, shot.scaleOverride);
+        case "deriveArmour": this.toggleDerived(field(row, sbsI18n("swade-better-called-shots.UI.armour_4bde87895b")), input.checked, preview.derivedArmour, shot.armourOverride); break;
+        case "deriveScale": this.toggleDerived(field(row, sbsI18n("swade-better-called-shots.UI.scale_f469802a31")), input.checked, shot.derivedScale, shot.scaleOverride);
           row.querySelector("[data-bcs-pick-scale]").disabled = input.checked; break;
-        case "deriveAttack": field(row, "attack").disabled = input.checked; break;
+        case "deriveAttack": field(row, sbsI18n("swade-better-called-shots.UI.attack_fca3067963")).disabled = input.checked; break;
         case "equipAffects": row.querySelector(".bcs-adjustments").hidden = !input.checked; break;
       }
       if (input.dataset.noteField === "outcome") input.closest(".bcs-note").querySelector("[data-note-raises]").hidden = input.value !== "exact";
@@ -177,20 +178,20 @@ class CalledShotsEditor extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   updateSummary(row, shot) {
-    const attackInput = field(row, "attack");
-    const scaleInput = field(row, "scale");
+    const attackInput = field(row, sbsI18n("swade-better-called-shots.UI.attack_fca3067963"));
+    const scaleInput = field(row, sbsI18n("swade-better-called-shots.UI.scale_f469802a31"));
     const preview = {...shot, scale: scaleInput.value === "" ? shot.derivedScale : readNumber(scaleInput),
       attack: attackInput.value === "" ? shot.defaultAttack ?? 0 : readNumber(attackInput)};
     let defence;
     if (shot.item) {
-      preview.deriveAttack = field(row, "deriveAttack").checked;
-      preview.equipAffects = field(row, "equipAffects").checked;
+      preview.deriveAttack = field(row, sbsI18n("swade-better-called-shots.UI.deriveAttack_125cf5ce39")).checked;
+      preview.equipAffects = field(row, sbsI18n("swade-better-called-shots.UI.equipAffects_10a9bc6e95")).checked;
       preview.adjustments = Object.fromEntries([...row.querySelectorAll("[data-adjustment]")].map(input => [input.dataset.adjustment, readNumber(input)]));
-      defence = `Hardness ${readNumber(field(row, "hardness"))}`;
-    } else defence = `Armour ${readNumber(field(row, "armour"))}`;
+      defence = `Hardness ${readNumber(field(row, sbsI18n("swade-better-called-shots.UI.hardness_25d304dd0e")))}`;
+    } else defence = `Armour ${readNumber(field(row, sbsI18n("swade-better-called-shots.UI.armour_4bde87895b")))}`;
     const attack = signed(attackModifier(preview, 0));
-    const damage = signed(readNumber(field(row, "damage")));
-    row.querySelector(".bcs-shot-summary").textContent = `${defence} · Attack ${attack} · Damage ${damage}`;
+    const damage = signed(readNumber(field(row, sbsI18n("swade-better-called-shots.UI.damage_6f5a5c61cc"))));
+    row.querySelector(".bcs-shot-summary").textContent = sbsI18n("swade-better-called-shots.UI.AttackDamage_094a691fce", {p0: (defence), p1: (attack), p2: (damage)});
   }
 
   toggleDerived(input, checked, derived, saved) {
@@ -224,32 +225,32 @@ class CalledShotsEditor extends HandlebarsApplicationMixin(ApplicationV2) {
           if (Object.keys(note).some(key => note[key] !== baseline?.[key])) defaultNoteOverrides[id] = note.text ? note : false;
         }
         for (const id of defaults.keys()) defaultNoteOverrides[id] = false;
-        const settings = {damage: readNumber(field(row, "damage")), flags: normalizeFlags(field(row, "flags").value), notes};
+        const settings = {damage: readNumber(field(row, sbsI18n("swade-better-called-shots.UI.damage_6f5a5c61cc"))), flags: normalizeFlags(field(row, sbsI18n("swade-better-called-shots.UI.flags_2934fb49d6")).value), notes};
         if (shot.item) {
           Object.assign(settings, {
-            hardness: Math.max(0, readNumber(field(row, "hardness"))),
-            deriveAttack: field(row, "deriveAttack").checked,
-            attack: readNumber(field(row, "attack")), equipAffects: field(row, "equipAffects").checked,
+            hardness: Math.max(0, readNumber(field(row, sbsI18n("swade-better-called-shots.UI.hardness_25d304dd0e")))),
+            deriveAttack: field(row, sbsI18n("swade-better-called-shots.UI.deriveAttack_125cf5ce39")).checked,
+            attack: readNumber(field(row, sbsI18n("swade-better-called-shots.UI.attack_fca3067963"))), equipAffects: field(row, sbsI18n("swade-better-called-shots.UI.equipAffects_10a9bc6e95")).checked,
             adjustments: Object.fromEntries([...row.querySelectorAll("[data-adjustment]")].map(input => [input.dataset.adjustment, readNumber(input)]))
           });
           const changed = Object.fromEntries(Object.entries(settings).filter(([key, value]) => JSON.stringify(shot[key]) !== JSON.stringify(value)));
-          const scale = field(row, "scale");
+          const scale = field(row, sbsI18n("swade-better-called-shots.UI.scale_f469802a31"));
           const scaleOverride = scale.value === "" ? null : readNumber(scale);
           if (scaleOverride !== shot.scaleOverride) changed.scale = scaleOverride;
           if (Object.keys(changed).length && this.actor.items.has(shot.item.id)) {
             itemUpdates.push({_id: shot.item.id, [`flags.${MODULE_ID}.shot`]: changed});
           }
         } else {
-          const attack = field(row, "attack");
+          const attack = field(row, sbsI18n("swade-better-called-shots.UI.attack_fca3067963"));
           const useDefaultAttack = attack.value === "" ||
             (shot.attackOverride == null && attack.value === attack.dataset.defaultAttack);
           Object.assign(settings, {
-            deriveArmour: field(row, "deriveArmour").checked, deriveScale: field(row, "deriveScale").checked,
+            deriveArmour: field(row, sbsI18n("swade-better-called-shots.UI.deriveArmour_7a7d0df19d")).checked, deriveScale: field(row, sbsI18n("swade-better-called-shots.UI.deriveScale_f5e82ea0e2")).checked,
             attack: useDefaultAttack ? null : readNumber(attack)
           });
-          if (!settings.deriveArmour) settings.armour = Math.max(0, readNumber(field(row, "armour")));
-          if (!settings.deriveScale) settings.scale = readNumber(field(row, "scale"));
-          if (shot.hasHelmet) settings.helmet = field(row, "helmet").value;
+          if (!settings.deriveArmour) settings.armour = Math.max(0, readNumber(field(row, sbsI18n("swade-better-called-shots.UI.armour_4bde87895b"))));
+          if (!settings.deriveScale) settings.scale = readNumber(field(row, sbsI18n("swade-better-called-shots.UI.scale_f469802a31")));
+          if (shot.hasHelmet) settings.helmet = field(row, sbsI18n("swade-better-called-shots.UI.helmet_115584860c")).value;
           const baseline = {...shot, attack: shot.attackOverride ?? null, armour: shot.armourOverride, scale: shot.scaleOverride};
           if (shot.deriveArmour && !settings.deriveArmour) delete baseline.armour;
           if (shot.deriveScale && !settings.deriveScale) delete baseline.scale;
@@ -293,8 +294,8 @@ export function renderActorButton(app, root) {
   const button = node(root.ownerDocument, "button");
   button.type = "button";
   button.className = "bcs-sheet-button";
-  button.setAttribute("aria-label", "Called Shots");
-  button.dataset.tooltip = "Called Shots";
+  button.setAttribute("aria-label", sbsI18n("swade-better-called-shots.UI.CalledShots_eefd89ce13"));
+  button.dataset.tooltip = sbsI18n("swade-better-called-shots.UI.CalledShots_eefd89ce13");
   const icon = node(root.ownerDocument, "img");
   icon.src = getRoute("target.png");
   icon.alt = "";
@@ -342,16 +343,16 @@ export function renderGearFields(app, root) {
     row.append(title, fields);
     return {row, fields, input};
   }
-  const hardness = control("Hardness", "shot.hardness", "number", values.hardness, readNumber);
-  const scale = control("Scale", "shot.scale", "number", values.scaleOverride,
+  const hardness = control(sbsI18n("swade-better-called-shots.UI.Hardness_c5f4f8b1a0"), "shot.hardness", sbsI18n("swade-better-called-shots.UI.number_12886f9d00"), values.hardness, readNumber);
+  const scale = control(sbsI18n("swade-better-called-shots.UI.Scale_f102986b39"), "shot.scale", sbsI18n("swade-better-called-shots.UI.number_12886f9d00"), values.scaleOverride,
     input => input.value === "" ? null : readNumber(input));
   Object.assign(scale.input, {min: "-6", max: "6", step: "2", placeholder: String(values.derivedScale)});
   scale.input.dataset.tooltip = values.scaleOverride == null && item.type === "armor" ? `${scaleLabel(values.scale)} · Derived from creature scale` : scaleLabel(values.scale);
   const pick = node(doc, "button");
   pick.type = "button";
   pick.disabled = scale.input.disabled;
-  pick.setAttribute("aria-label", "Pick scale");
-  pick.dataset.tooltip = "Pick scale";
+  pick.setAttribute("aria-label", sbsI18n("swade-better-called-shots.UI.Pickscale_0e716ba9a1"));
+  pick.dataset.tooltip = sbsI18n("swade-better-called-shots.UI.Pickscale_0e716ba9a1");
   const icon = node(doc, "i");
   icon.className = "fa-solid fa-ruler";
   pick.append(icon);
@@ -359,7 +360,7 @@ export function renderGearFields(app, root) {
     void pickScale(scale.input, () => scale.input.dispatchEvent(new Event("change", {bubbles: true}))).catch(report);
   });
   scale.fields.append(pick);
-  const allow = control("Allow Called Shots", "shot.allowCalledShots", "checkbox", values.allowCalledShots, input => input.checked);
+  const allow = control(sbsI18n("swade-better-called-shots.UI.AllowCalledShots_fbfac1d2e3"), "shot.allowCalledShots", sbsI18n("swade-better-called-shots.UI.checkbox_6fe9eb8f46"), values.allowCalledShots, input => input.checked);
   allow.row.classList.add("inline");
   allow.fields.replaceWith(allow.input);
   gear.append(hardness.row, scale.row, allow.row);
@@ -372,15 +373,15 @@ export function renderGearFields(app, root) {
   const group = node(doc, "fieldset");
   group.className = "bcs-gear-fields";
   group.append(node(doc, "legend", "Called Shots"));
-  const types = item.type === "armor" ? [["resistance", "Provides Resistance"]]
-    : [["resistance", "Resistance"], ["weakness", "Weakness"]];
+  const types = item.type === "armor" ? [["resistance", sbsI18n("swade-better-called-shots.UI.ProvidesResistance_2240f60d76")]]
+    : [["resistance", sbsI18n("swade-better-called-shots.UI.Resistance_c35070bce1")], ["weakness", sbsI18n("swade-better-called-shots.UI.Weakness_f3e0689e79")]];
   for (const [key, label] of types) {
     const {value, flags} = damageRuleSettings(item, key);
-    const amount = control(label, `${key}.value`, "number", value, readNumber);
-    const condition = control(`${label} flags`, `${key}.flags`, "text", flags.join(", "),
+    const amount = control(label, sbsI18n("swade-better-called-shots.UI.value_97efa10102", {p0: (key)}), sbsI18n("swade-better-called-shots.UI.number_12886f9d00"), value, readNumber);
+    const condition = control(`${label} flags`, sbsI18n("swade-better-called-shots.UI.flags_a910563d82", {p0: (key)}), sbsI18n("swade-better-called-shots.UI.text_982d9e3eb9"), flags.join(", "),
       input => [...new Set(input.value.split(",").map(normalizePattern).filter(Boolean))]);
-    condition.input.placeholder = "e.g. firearm";
-    condition.input.dataset.tooltip = "Comma-separated damage flags. All must match. Use * to match any damage.";
+    condition.input.placeholder = sbsI18n("swade-better-called-shots.UI.egfirearm_e753a3d9d5");
+    condition.input.dataset.tooltip = sbsI18n("swade-better-called-shots.UI.CommaseparateddamageflagsAllmust_d90c5a4552");
     group.append(amount.row, condition.row);
   }
   properties.prepend(group);

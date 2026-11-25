@@ -7,6 +7,7 @@ import {cleanRollNote} from "../../swade-better-effects/scripts/roll-notes.mjs";
 import {normalizeFlags} from "../../swade-better-effects/scripts/rules.mjs";
 import {MODULE_ID, EFFECTS, actorShots, allShots, attackModifier, rollNotes, rollOutcome, scaleOf, shotFlags, signed} from "./shots.mjs";
 import {disarmRuleLink} from "./disarm.mjs";
+import {copyManeuverSource, installManeuvers, maneuverDamageModifiers, prepareManeuvers} from "./maneuvers.mjs";
 
 const dialogStates = new WeakMap();
 const pendingRolls = new WeakMap();
@@ -140,6 +141,7 @@ function buildShotRoll(original, terms, options, damage) {
   // original first term is registered, so conditional damage is added once.
   const copies = terms.map(term => foundry.dice.terms.RollTerm.fromData(foundry.utils.deepClone(term.toJSON())));
   const roll = original(copies, {...options, [MODULE_ID]: state.snapshot});
+  if (!damage) copyManeuverSource(terms[0], roll);
   let context = state.rollContext;
   if (damage) {
     const acing = state.shot.kind !== "item" && !state.noAcing;
@@ -269,7 +271,8 @@ export async function rollShotDamage(message, raisedAttack, actionId) {
   const damageAction = action?.type === "damage" ? action : null;
   if (!weapon?.isOwner || !(damageAction?.override || weapon.system.damage)) return ui.notifications.warn(sbsI18n("swade-better-called-shots.UI.Theweaponforthisattackis_4463262767"));
   const damageMod = game.swade.itemChatCardHelper.getDamageMod(weapon);
-  const additionalMods = damageMod ? [damageMod] : [];
+  const additionalMods = maneuverDamageModifiers(message);
+  if (damageMod) additionalMods.push(damageMod);
   if (damageAction?.modifier) additionalMods.push({label: damageAction.name, value: damageAction.modifier});
   return weapon.rollDamage({additionalMods, dmgOverride: damageAction?.override, ap: damageAction?.ap,
     isHeavyWeapon: damageAction?.isHeavyWeapon, flavour: damageAction?.name,
@@ -277,6 +280,7 @@ export async function rollShotDamage(message, raisedAttack, actionId) {
 }
 
 export function installRolls() {
+  installManeuvers();
   const {RollDialog} = game.swade;
   const {TraitRoll, DamageRoll} = CONFIG.Dice;
   Hooks.on("swadePreRollSkill", captureTrait);
@@ -295,6 +299,7 @@ export function installRolls() {
     mods.push(...target?.actor?.system.stats?.globalMods.targetDamage ?? []);
   });
   wrap(RollDialog.prototype, "_prepareContext", async function (original, ...args) {
+    prepareManeuvers(this);
     const state = prepareDialog(this);
     const context = await original(...args);
     if (state?.shot?.kind === "item" && this.isDamageRoll) context.noAcing = true;

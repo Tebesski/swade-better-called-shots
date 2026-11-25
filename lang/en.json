@@ -1,6 +1,8 @@
 {
   "swade-better-called-shots": {
     "UI": {
+      "WildAttack": "Wild Attack",
+      "TheDrop": "The Drop",
       "Thisdamagerollisnotaccessible_6d3b75e0a6": "This damage roll is not accessible.",
       "Onlytherollauthorora_e992e08ed9": "Only the roll author or a GM can send damage.",
       "Thiscalledshotcannotberesolved_5e3183c687": "This called shot cannot be resolved.",
